@@ -8,7 +8,11 @@
     <div class="player-page__frame">
       <div #playerEl></div>
 
-      <div class="overlay" *ngIf="activeAnnotation() as annotation">
+      <div
+        class="overlay"
+        [class.overlay--floating]="!annotation.pauseVideo"
+        *ngIf="activeAnnotation() as annotation"
+      >
         <div class="overlay__card">
           <span class="overlay__kicker" *ngIf="annotation.type === 'note'">Note</span>
           <span class="overlay__kicker" *ngIf="annotation.type !== 'note'">Checkpoint</span>

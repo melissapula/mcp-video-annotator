@@ -38,15 +38,12 @@
     background: #000;
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
 
+    // The YT IFrame API replaces this div with an <iframe> outside Angular's
+    // view (see the `onReady` handler in video-player.ts, which sizes the
+    // actual iframe directly). This just avoids a layout flash beforehand.
     > div:first-child {
       width: 100%;
       height: 100%;
-    }
-
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
     }
   }
 
@@ -101,6 +98,22 @@
   justify-content: center;
   padding: 1.25rem;
   animation: fade-in 0.15s ease;
+
+  // Used when the annotation doesn't pause the video (e.g. a 'note'): the
+  // video keeps playing underneath, so it shouldn't be fully covered by a
+  // dimmed, centered modal. Instead it's a small card tucked in a corner.
+  &--floating {
+    background: transparent;
+    backdrop-filter: none;
+    align-items: flex-start;
+    justify-content: flex-end;
+    pointer-events: none;
+
+    .overlay__card {
+      max-width: 320px;
+      pointer-events: auto;
+    }
+  }
 
   &__card {
     background: #fff;

@@ -102,6 +102,15 @@ export class VideoPlayer implements OnInit, OnDestroy {
       videoId: video.youtubeId,
       playerVars: { rel: 0, modestbranding: 1 },
       events: {
+        // The IFrame API injects its <iframe> outside Angular's view, so
+        // Angular's scoped component styles (which only match elements the
+        // component itself rendered) can never reach it — size it directly
+        // instead of relying on a `width/height: 100%` CSS rule to apply.
+        onReady: (event: YT.PlayerEvent) => {
+          const iframe = event.target.getIframe();
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+        },
         onStateChange: (event: YT.OnStateChangeEvent) => this.playerState$.next(event.data),
       },
     });
