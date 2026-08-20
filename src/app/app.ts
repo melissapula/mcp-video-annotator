@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Nav } from './shared/components/nav/nav';
 
@@ -7,6 +7,7 @@ import { Nav } from './shared/components/nav/nav';
   standalone: true,
   imports: [RouterOutlet, Nav],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.scss',
 })
 export class App {}

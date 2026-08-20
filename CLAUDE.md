@@ -33,14 +33,9 @@ already made.
 ## Current status (as of hand-off)
 
 **Done:**
-- Angular 21 app scaffolded (standalone components, signals, lazy-loaded routes).
-  Note: the task requested Angular 22, but the environment this was built in
-  couldn't satisfy Angular 22's Node engine requirement. Angular 21 was used
-  instead and this is disclosed honestly in `README.md`. If Claude Code's
-  environment has a newer Node version available, consider upgrading to Angular 22
-  to match the task's ask exactly — check `node --version` (needs `^22.22.3` or
-  `^24.15.0` or `>=26.0.0` for Angular 22) and run
-  `npx @angular/cli@latest update` if so.
+- Angular 22 app scaffolded (standalone components, signals, lazy-loaded routes),
+  matching the task's ask exactly — see the Node version note immediately below
+  before running anything.
 - Student flow: `/videos` (list) → `/videos/:id` (player with YouTube IFrame API +
   RxJS-driven annotation overlay for multiple-choice, fill-in-blank, and note
   annotation types).
@@ -75,8 +70,36 @@ injection context) and combined with the video and YouTube-API streams via
 `combineLatest`. This is arguably a better fit for the RxJS-centric evaluation
 criteria than the static query it replaced.
 
-**Not done / optional next step:**
-1. **Optional:** a <5 minute walkthrough video, per the submission guidelines.
+**Video walkthrough:** recorded and linked at the top of `README.md`
+(youtube.com/watch?v=k0FCOAXiDuE). Submission is fully complete.
+
+## Node version — read this before running any npm/ng command
+
+Angular 22 requires Node `^22.22.3`, `^24.15.0`, or `>=26.0.0` (see `.nvmrc` /
+`package.json`'s `engines` field for the exact pin). The machine this was built on
+has a global Node `24.13.1` install (from the official installer, at
+`C:\Program Files\nodejs`) that's just below the cutoff — `npm start`/`npm test`/
+`npm run build` will hard-fail with "The Angular CLI requires a minimum Node.js
+version..." if run against it directly.
+
+`nvm-windows` is installed and was used to install `24.19.0`
+(`C:\Users\missa\AppData\Roaming\nvm\v24.19.0\`), but `nvm use 24.19.0` fails even
+elevated ("directory is not empty") because the existing global Node isn't an
+nvm-managed symlink — deleting/replacing it wasn't attempted since it's outside
+this project's scope and could affect other things on the machine. **Don't try to
+force that fix without asking Missa first.**
+
+The working approach, every session, before running `npm`/`ng` commands directly
+(the Bash/PowerShell tools reset shell state between calls, so this needs
+repeating per command or per script):
+
+```powershell
+$env:PATH = "C:\Users\missa\AppData\Roaming\nvm\v24.19.0;" + $env:PATH
+npm start   # or npm test / npm run build
+```
+
+Netlify's own build doesn't need this — it reads `.nvmrc` and picks a compatible
+Node version automatically.
 
 ## Key architectural decisions (already made — don't relitigate without reason)
 
@@ -115,6 +138,8 @@ netlify.toml                       # build/publish config + SPA redirect rule
 ```
 
 ## Commands
+
+See the Node version section above first — these need Node `24.19.0` on the PATH.
 
 ```bash
 npm install
