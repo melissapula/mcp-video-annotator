@@ -1,0 +1,27 @@
+<section class="video-list">
+  <header class="video-list__header">
+    <h1>Your Videos</h1>
+    <p>Pick a video to watch. Questions and notes will pop up as you go.</p>
+  </header>
+
+  <div class="video-list__grid" *ngIf="videos$ | async as videos">
+    <a
+      *ngFor="let video of videos"
+      class="video-card"
+      [routerLink]="['/videos', video.id]"
+    >
+      <div class="video-card__thumb">
+        <img [src]="thumbnailUrl(video)" [alt]="video.title" loading="lazy" />
+        <span class="video-card__badge">{{ video.annotations.length }} checkpoint{{ video.annotations.length === 1 ? '' : 's' }}</span>
+      </div>
+      <div class="video-card__body">
+        <h2>{{ video.title }}</h2>
+        <p>{{ video.description }}</p>
+      </div>
+    </a>
+
+    <p class="video-list__empty" *ngIf="!videos.length">
+      No videos yet. Ask your teacher to add one from the admin dashboard.
+    </p>
+  </div>
+</section>

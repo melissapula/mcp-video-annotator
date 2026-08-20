@@ -1,0 +1,12 @@
+<nav class="nav">
+  <a class="nav__brand" routerLink="/videos">
+    <span class="nav__brand-mark">▶</span>
+    Video Annotator
+  </a>
+  <div class="nav__links">
+    <a routerLink="/videos" routerLinkActive="nav__link--active" [routerLinkActiveOptions]="{ exact: false }">
+      Student view
+    </a>
+    <a routerLink="/admin" routerLinkActive="nav__link--active">Teacher dashboard</a>
+  </div>
+</nav>

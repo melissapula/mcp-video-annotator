@@ -1,0 +1,104 @@
+<section class="player-page" *ngIf="video$ | async as video; else notFound">
+  <a class="player-page__back" routerLink="/videos">&larr; All videos</a>
+
+  <h1>{{ video.title }}</h1>
+  <p class="player-page__description">{{ video.description }}</p>
+
+  <div class="player-page__stage">
+    <div class="player-page__frame">
+      <div #playerEl></div>
+
+      <div class="overlay" *ngIf="activeAnnotation() as annotation">
+        <div class="overlay__card">
+          <span class="overlay__kicker" *ngIf="annotation.type === 'note'">Note</span>
+          <span class="overlay__kicker" *ngIf="annotation.type !== 'note'">Checkpoint</span>
+
+          <p class="overlay__prompt">{{ annotation.prompt }}</p>
+
+          <!-- Multiple choice -->
+          <ng-container *ngIf="annotation.type === 'multiple-choice'">
+            <ul class="overlay__options">
+              <li *ngFor="let option of annotation.options">
+                <button
+                  type="button"
+                  class="option"
+                  [class.option--selected]="selectedOptionId() === option.id"
+                  [class.option--correct]="feedback() && option.id === annotation.correctAnswer"
+                  [class.option--incorrect]="feedback() === 'incorrect' && selectedOptionId() === option.id && option.id !== annotation.correctAnswer"
+                  [disabled]="!!feedback()"
+                  (click)="selectOption(option.id)"
+                >
+                  {{ option.text }}
+                </button>
+              </li>
+            </ul>
+            <button
+              class="btn btn--primary"
+              type="button"
+              *ngIf="!feedback()"
+              [disabled]="!selectedOptionId()"
+              (click)="submitAnswer()"
+            >
+              Submit answer
+            </button>
+          </ng-container>
+
+          <!-- Fill in the blank -->
+          <ng-container *ngIf="annotation.type === 'fill-in-blank'">
+            <input
+              class="overlay__input"
+              type="text"
+              placeholder="Type your answer"
+              [ngModel]="fillInAnswer()"
+              (ngModelChange)="fillInAnswer.set($event)"
+              [disabled]="!!feedback()"
+              (keyup.enter)="submitAnswer()"
+            />
+            <button
+              class="btn btn--primary"
+              type="button"
+              *ngIf="!feedback()"
+              [disabled]="!fillInAnswer().trim()"
+              (click)="submitAnswer()"
+            >
+              Submit answer
+            </button>
+          </ng-container>
+
+          <p class="overlay__feedback" *ngIf="feedback() === 'correct'">✅ Nice work &mdash; that's correct!</p>
+          <p class="overlay__feedback overlay__feedback--incorrect" *ngIf="feedback() === 'incorrect'">
+            Not quite.
+            <span *ngIf="annotation.type === 'fill-in-blank'">The answer was "{{ annotation.correctAnswer }}".</span>
+          </p>
+
+          <button
+            class="btn"
+            type="button"
+            *ngIf="annotation.type === 'note' || feedback()"
+            (click)="continue()"
+          >
+            Continue watching
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="player-page__checkpoints" *ngIf="video.annotations.length">
+    <h2>Checkpoints in this video</h2>
+    <ol>
+      <li *ngFor="let annotation of video.annotations">
+        <span class="checkpoint-time">{{ annotation.timestamp }}s</span>
+        <span class="checkpoint-type">{{ annotation.type }}</span>
+        &mdash; {{ annotation.prompt }}
+      </li>
+    </ol>
+  </section>
+</section>
+
+<ng-template #notFound>
+  <div class="player-page__not-found">
+    <p>We couldn't find that video.</p>
+    <a routerLink="/videos">Back to all videos</a>
+  </div>
+</ng-template>

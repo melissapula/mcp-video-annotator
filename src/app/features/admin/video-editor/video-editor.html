@@ -1,0 +1,130 @@
+<section class="editor" *ngIf="video$ | async as video; else notFound">
+  <a class="editor__back" routerLink="/admin">&larr; Teacher dashboard</a>
+  <h1>{{ video.title }}</h1>
+  <p class="editor__description">{{ video.description }}</p>
+
+  <section class="editor__card">
+    <h2>Add a checkpoint</h2>
+    <form class="editor__form" (ngSubmit)="addAnnotation(video.id)">
+      <div class="editor__row">
+        <label>
+          Timestamp (seconds)
+          <input
+            type="number"
+            min="0"
+            [ngModel]="timestamp()"
+            (ngModelChange)="timestamp.set($event)"
+            name="timestamp"
+          />
+        </label>
+
+        <label>
+          Type
+          <select [ngModel]="type()" (ngModelChange)="type.set($event)" name="type">
+            <option value="multiple-choice">Multiple choice</option>
+            <option value="fill-in-blank">Fill in the blank</option>
+            <option value="note">Note (no answer)</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        Prompt
+        <textarea
+          [ngModel]="prompt()"
+          (ngModelChange)="prompt.set($event)"
+          name="prompt"
+          rows="2"
+          placeholder="What should students see?"
+        ></textarea>
+      </label>
+
+      <ng-container *ngIf="type() === 'multiple-choice'">
+        <div class="editor__options">
+          <div class="editor__option" *ngFor="let option of options()">
+            <input
+              type="radio"
+              name="correctAnswer"
+              [checked]="correctAnswer() === option.id"
+              (change)="correctAnswer.set(option.id)"
+              [attr.aria-label]="'Mark option ' + option.id + ' as correct'"
+            />
+            <input
+              type="text"
+              [ngModel]="option.text"
+              (ngModelChange)="updateOptionText(option.id, $event)"
+              name="option-{{ option.id }}"
+              placeholder="Answer option"
+            />
+            <button
+              type="button"
+              class="editor__remove-option"
+              (click)="removeOption(option.id)"
+              *ngIf="options().length > 2"
+              aria-label="Remove option"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+        <button type="button" class="btn" (click)="addOption()">+ Add option</button>
+      </ng-container>
+
+      <label *ngIf="type() === 'fill-in-blank'">
+        Expected answer
+        <input
+          type="text"
+          [ngModel]="correctAnswer()"
+          (ngModelChange)="correctAnswer.set($event)"
+          name="expectedAnswer"
+          placeholder="e.g. leaves"
+        />
+      </label>
+
+      <label class="editor__checkbox">
+        <input
+          type="checkbox"
+          [ngModel]="pauseVideo()"
+          (ngModelChange)="pauseVideo.set($event)"
+          name="pauseVideo"
+        />
+        Pause the video when this checkpoint appears
+      </label>
+
+      <p class="editor__error" *ngIf="formError()">{{ formError() }}</p>
+
+      <button class="btn btn--primary" type="submit">Add checkpoint</button>
+    </form>
+  </section>
+
+  <section class="editor__card">
+    <h2>Existing checkpoints</h2>
+    <ul class="editor__annotation-list">
+      <li *ngFor="let annotation of video.annotations">
+        <div>
+          <span class="editor__badge">{{ annotation.timestamp }}s</span>
+          <span class="editor__badge editor__badge--type">{{ annotation.type }}</span>
+          <p>{{ annotation.prompt }}</p>
+        </div>
+        <button
+          class="btn btn--danger"
+          type="button"
+          (click)="removeAnnotation(video.id, annotation.id)"
+        >
+          Remove
+        </button>
+      </li>
+
+      <li class="editor__empty" *ngIf="!video.annotations.length">
+        No checkpoints yet — add one above.
+      </li>
+    </ul>
+  </section>
+</section>
+
+<ng-template #notFound>
+  <div class="editor__not-found">
+    <p>We couldn't find that video.</p>
+    <a routerLink="/admin">Back to dashboard</a>
+  </div>
+</ng-template>

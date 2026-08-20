@@ -1,0 +1,231 @@
+.player-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 4rem;
+
+  &__back {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.7rem;
+  }
+
+  &__description {
+    margin: 0 0 1.25rem;
+    color: var(--color-text-muted);
+  }
+
+  &__stage {
+    margin-bottom: 2rem;
+  }
+
+  &__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+
+    > div:first-child {
+      width: 100%;
+      height: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  }
+
+  &__not-found {
+    max-width: 640px;
+    margin: 4rem auto;
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  &__checkpoints {
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    ol {
+      margin: 0;
+      padding-left: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      color: var(--color-text-muted);
+      font-size: 0.92rem;
+    }
+
+    .checkpoint-time {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-right: 0.4rem;
+    }
+
+    .checkpoint-type {
+      text-transform: capitalize;
+      background: var(--color-surface-alt);
+      border-radius: 999px;
+      padding: 0.1rem 0.55rem;
+      font-size: 0.75rem;
+      margin-right: 0.4rem;
+    }
+  }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  animation: fade-in 0.15s ease;
+
+  &__card {
+    background: #fff;
+    color: var(--color-text);
+    border-radius: 14px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.35);
+  }
+
+  &__kicker {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  &__prompt {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  &__options {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+    }
+  }
+
+  &__feedback {
+    font-weight: 600;
+    margin: 0.25rem 0 1rem;
+    color: #15803d;
+
+    &--incorrect {
+      color: #b91c1c;
+    }
+  }
+}
+
+.option {
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-radius: 9px;
+  border: 1.5px solid var(--color-border);
+  background: #fff;
+  font-size: 0.94rem;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-primary);
+  }
+
+  &--selected {
+    border-color: var(--color-primary);
+    background: var(--color-primary-tint);
+  }
+
+  &--correct {
+    border-color: #15803d;
+    background: #ecfdf3;
+  }
+
+  &--incorrect {
+    border-color: #b91c1c;
+    background: #fef2f2;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.btn {
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text);
+  padding: 0.6rem 1.1rem;
+  border-radius: 9px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &--primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
