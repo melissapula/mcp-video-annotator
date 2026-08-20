@@ -5,6 +5,8 @@ videos that pause at teacher-defined checkpoints for multiple-choice questions,
 fill-in-the-blank prompts, or short notes. Teachers can add new videos and checkpoints
 from an admin dashboard, no login required (per the task's demo-scope note).
 
+**Live demo:** https://mcp-video-annotator.netlify.app
+
 ## Tech stack
 
 - **Angular 21** (standalone components, signals, `@if`/`@for`-style control flow via
@@ -65,10 +67,6 @@ this.playerState$.pipe(
   smooth for question checkpoints but isn't frame-perfect; the YouTube IFrame API
   doesn't expose a native `timeupdate` event the way `<video>` does, so polling
   while playing was the practical option.
-- **No automated tests beyond the default app shell test.** With more time I'd add
-  unit tests around `VideoLibrary` (CRUD + persistence) and the annotation-trigger
-  logic in `VideoPlayer` (especially the rewind/re-trigger behavior), since that's
-  the highest-value logic to protect with tests.
 - **Styling is hand-rolled SCSS**, not a design system, since the brief asked to
   keep things simple rather than production-polished.
 
@@ -85,6 +83,17 @@ Two routes:
 
 Seed data (two videos with a few checkpoints each) is included so the app is useful
 immediately; anything added through `/admin` persists to `localStorage`.
+
+## Testing
+
+```bash
+npm test
+```
+
+Unit tests cover `VideoLibrary` (CRUD, sorting, localStorage persistence and
+fallback, `extractYoutubeId` URL parsing) and the annotation-triggering logic in
+`VideoPlayer` (checkpoint triggering by type, pause-on-checkpoint, one-checkpoint-
+at-a-time, rewind re-triggering, and answer grading).
 
 ## Build
 
