@@ -81,10 +81,9 @@ symlink, and `nvm use` needs to delete-and-relink that path — "directory is no
 empty." Rather than force it by deleting a non-nvm-managed, MSI-installed Node
 folder (risky for anything else on the machine depending on it), the fix was
 narrower: run this project's `npm`/`ng` commands against the nvm-installed
-`24.19.0` binary directly, and commit a `.nvmrc` pinning that version. That fixes
-it for anyone using `nvm`, and Netlify's build also reads `.nvmrc` to pick its
-Node version, so the deployed build gets the right version automatically without
-touching the local machine's global install at all.
+`24.19.0` binary directly, and commit a `.nvmrc` pinning that version so `nvm use`
+(or any Node-version-aware tool) resolves the right one, without touching the
+local machine's global Node install at all.
 
 ## Trade-offs and things I'd do differently with more time
 

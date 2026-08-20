@@ -98,8 +98,12 @@ $env:PATH = "C:\Users\missa\AppData\Roaming\nvm\v24.19.0;" + $env:PATH
 npm start   # or npm test / npm run build
 ```
 
-Netlify's own build doesn't need this — it reads `.nvmrc` and picks a compatible
-Node version automatically.
+Deploys go out via `netlify deploy --prod --dir=dist/mcp-video-annotator/browser`
+from this machine (same PATH override needed first) — this site isn't wired for
+Netlify's git-triggered continuous deploys, so `.nvmrc`'s role today is mainly to
+document/pin the version for local dev and `npm install`; it would also be what a
+git-triggered Netlify build reads to pick its Node version, if this site's deploy
+method changes to that later.
 
 ## Key architectural decisions (already made — don't relitigate without reason)
 
