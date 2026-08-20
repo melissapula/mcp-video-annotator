@@ -7,6 +7,10 @@ from an admin dashboard, no login required (per the task's demo-scope note).
 
 **Live demo:** https://mcp-video-annotator.netlify.app
 
+**Video walkthrough:**
+
+[![Video walkthrough](https://img.youtube.com/vi/k0FCOAXiDuE/maxresdefault.jpg)](https://www.youtube.com/watch?v=k0FCOAXiDuE)
+
 ## Tech stack
 
 - **Angular 21** (standalone components, signals, `@if`/`@for`-style control flow via
