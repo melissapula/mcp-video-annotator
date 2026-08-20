@@ -48,30 +48,35 @@ already made.
   `/admin/videos/:id` (add/remove checkpoints on that video).
 - Data layer: `VideoLibrary` service (`src/app/core/services/video-library.ts`),
   `BehaviorSubject`-backed, persists to `localStorage`, seeded with 2 demo videos.
-- `npm run build` passes. `npm test` passes (only the default app-shell smoke
-  test currently — see "Not done" below).
+- `npm run build` passes. `npm test` passes — 34 tests across `video-library.spec.ts`
+  (CRUD, sorting, localStorage persistence/fallback, `extractYoutubeId` edge cases)
+  and `video-player.spec.ts` (checkpoint triggering per annotation type,
+  pause-on-checkpoint, one-checkpoint-at-a-time, rewind re-triggering, answer
+  grading), plus the original app-shell smoke test.
+- **Manual QA in an actual browser** (done via Claude Code's browser tool): played
+  a video end to end, triggered all three annotation types, verified
+  correct/incorrect answer feedback, rewind-retriggers behavior, admin add-video →
+  manage-checkpoints → add/remove checkpoint flow, and the video-not-found route.
+  This QA pass caught a real bug — see below.
+- **Git initialized and pushed to GitHub**: https://github.com/melissapula/mcp-video-annotator
+  (public).
+- **Deployed to Netlify**: https://mcp-video-annotator.netlify.app (see
+  `netlify.toml` for build/publish config and the SPA redirect rule that keeps
+  deep links like `/videos/:id` working on a hard reload).
 
-**Not done / next steps, roughly in priority order:**
-1. **Manual/visual QA in an actual browser.** This was built and verified via
-   `ng build` + `ng test` + code review only — nobody has actually clicked through
-   it in a browser yet. Run `npm start`, open `http://localhost:4200`, and
-   actually watch a video, trigger a multiple-choice and a fill-in-blank
-   annotation, add a video as admin, add/remove a checkpoint, and confirm the
-   rewind-retriggers-annotations behavior works. Fix anything that's broken or
-   feels rough before submitting.
-2. **Unit tests beyond the default shell test.** Priority targets: `VideoLibrary`
-   (add/remove video, add/remove annotation, localStorage persistence,
-   `extractYoutubeId` edge cases) and the annotation-triggering logic in
-   `VideoPlayer` (this is the evaluated centerpiece, so it's worth having tests
-   that demonstrate it works, not just a working build).
-3. **Git init + push to GitHub**, since the submission requires a repo link.
-   This repo has not been git-initialized yet (`git init` hasn't been run).
-4. **Decide on deployment vs. "run locally" instructions.** Submission requires
-   either a deployed demo URL or clear local-run instructions (already in
-   `README.md`). If deploying, a static host (Netlify/Vercel/GitHub
-   Pages/Cloudflare Pages) is the natural fit since this is a fully client-side
-   Angular app with no backend.
-5. **Optional:** a <5 minute walkthrough video, per the submission guidelines.
+**Bug found and fixed during manual QA:** `video-player.ts` originally used
+`@ViewChild('playerEl', { static: true })`, but that div lives inside
+`*ngIf="video$ | async as video"` in the template — it doesn't exist in the DOM at
+static-query resolution time, so `playerElRef` was always `undefined` and the
+YouTube player never initialized (blank black box, console error). Fixed by
+replacing it with a signal-based `viewChild()` query, converted to an observable via
+`toObservable()` (declared as a field initializer, since `toObservable` requires an
+injection context) and combined with the video and YouTube-API streams via
+`combineLatest`. This is arguably a better fit for the RxJS-centric evaluation
+criteria than the static query it replaced.
+
+**Not done / optional next step:**
+1. **Optional:** a <5 minute walkthrough video, per the submission guidelines.
 
 ## Key architectural decisions (already made — don't relitigate without reason)
 
@@ -93,17 +98,20 @@ src/app/
   core/
     models/video.model.ts          # Video, Annotation types
     services/video-library.ts      # BehaviorSubject-backed CRUD + localStorage
+    services/video-library.spec.ts
     services/youtube-api-loader.ts # Lazy-loads the YT IFrame API script once
   features/
     student/
       video-list/                  # /videos
       video-player/                # /videos/:id — the RxJS centerpiece
+      video-player/video-player.spec.ts
     admin/
       admin-dashboard/             # /admin
       video-editor/                # /admin/videos/:id
   shared/components/nav/           # top nav
   app.routes.ts
   app.ts / app.html / app.scss     # shell
+netlify.toml                       # build/publish config + SPA redirect rule
 ```
 
 ## Commands
